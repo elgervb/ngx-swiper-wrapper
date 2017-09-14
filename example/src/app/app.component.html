@@ -39,7 +39,9 @@
           <div *ngIf="type == 'directive' && show" class="swiper-container" [swiper]="config" (indexChange)="onIndexChange($event)">
             <div class="swiper-wrapper">
               <div *ngFor="let slide of slides" class="swiper-slide">
-                <div class="swiper-slide-content" fxLayout="column" fxLayoutAlign="center center"><img src="http://lorempixel.com/350/400/cats/"></div>
+                <div class="swiper-zoom-container">
+                  <div class="swiper-slide-content" fxLayout="column" fxLayoutAlign="center center"><img src="http://lorempixel.com/350/400/cats/"></div>
+                </div>
               </div>
             </div>
 
