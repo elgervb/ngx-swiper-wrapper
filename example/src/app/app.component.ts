@@ -20,7 +20,7 @@ export class AppComponent {
     'Sixth slide'
   ];
 
-  public type: string = 'component';
+  public type: string = 'directive';
 
   public config: SwiperConfigInterface = {
     scrollbar: null,
@@ -79,6 +79,11 @@ export class AppComponent {
 
   toggleMouseWheelControl() {
     this.config.mousewheelControl = !this.config.mousewheelControl;
+  }
+
+  toggleZooming(): void {
+    this.config.zoom = !this.config.zoom;
+    this.config.zoomMax = this.config.zoom ? 2 : null;
   }
 
   onIndexChange(index: number) {

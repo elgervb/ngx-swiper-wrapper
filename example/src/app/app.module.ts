@@ -12,9 +12,11 @@ const SWIPER_CONFIG: SwiperConfigInterface = {
   direction: 'horizontal',
   threshold: 50,
   spaceBetween: 5,
-  slidesPerView: 1,
+  slidesPerView: 2,
   centeredSlides: true,
-  keyboardControl: true
+  keyboardControl: true,
+  zoom: true,
+  zoomMax: 3
 };
 
 @NgModule({

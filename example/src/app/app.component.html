@@ -21,6 +21,8 @@
         <div class="action-button" fxLayout="column" fxLayoutAlign="center" fxFlex (click)='toggleKeyboardControl()'>{{config.keyboardControl ? "Disable arrow keys" : "Enable arrow keys"}}</div>
 
         <div class="action-button" fxLayout="column" fxLayoutAlign="center" fxFlex (click)='toggleMouseWheelControl()'>{{config.mousewheelControl ? "Disable mouse wheel" : "Enable mouse wheel"}}</div>
+
+        <div class="action-button" fxLayout="column" fxLayoutAlign="center" fxFlex (click)='toggleZooming()'>{{config.zoom ? "Disable zooming" : "Enable zooming"}}</div>
       </div>
     </div>
 
@@ -28,27 +30,27 @@
       <div class="box-title">Swiper</div>
 
       <div class="content-container" fxLayout="column" fxLayoutAlign="stretch" fxFlex>
-        <swiper *ngIf="type == 'component' && show" overlay-controls [config]="config" (indexChange)="onIndexChange($event)" fxFlex>
-          <div *ngFor="let slide of slides" class="swiper-slide">
-            <div class="swiper-slide-content" fxLayout="column" fxLayoutAlign="center center">{{slide}}</div>
-          </div>
-        </swiper>
-
-        <div *ngIf="type == 'directive' && show" class="swiper-container" [swiper]="config" (indexChange)="onIndexChange($event)">
-          <div class="swiper-wrapper">
+          <swiper *ngIf="type == 'component' && show" overlay-controls [config]="config" (indexChange)="onIndexChange($event)" fxFlex>
             <div *ngFor="let slide of slides" class="swiper-slide">
-              <div class="swiper-slide-content" fxLayout="column" fxLayoutAlign="center center">{{slide}}</div>
+              <div class="swiper-slide-content" fxLayout="column" fxLayoutAlign="center center"><img src="http://lorempixel.com/350/400/cats/"></div>
             </div>
+          </swiper>
+
+          <div *ngIf="type == 'directive' && show" class="swiper-container" [swiper]="config" (indexChange)="onIndexChange($event)">
+            <div class="swiper-wrapper">
+              <div *ngFor="let slide of slides" class="swiper-slide">
+                <div class="swiper-slide-content" fxLayout="column" fxLayoutAlign="center center"><img src="http://lorempixel.com/350/400/cats/"></div>
+              </div>
+            </div>
+
+            <div [hidden]="config.scrollbar != '.swiper-scrollbar'" class="swiper-scrollbar"></div>
+
+            <div [hidden]="config.pagination != '.swiper-pagination'" class="swiper-pagination"></div>
+
+            <div [hidden]="config.prevButton != '.swiper-button-prev'" class="swiper-button-prev"></div>
+            <div [hidden]="config.nextButton != '.swiper-button-next'" class="swiper-button-next"></div>
           </div>
-
-          <div [hidden]="config.scrollbar != '.swiper-scrollbar'" class="swiper-scrollbar"></div>
-
-          <div [hidden]="config.pagination != '.swiper-pagination'" class="swiper-pagination"></div>
-
-          <div [hidden]="config.prevButton != '.swiper-button-prev'" class="swiper-button-prev"></div>
-          <div [hidden]="config.nextButton != '.swiper-button-next'" class="swiper-button-next"></div>
         </div>
       </div>
     </div>
   </div>
-</div>
