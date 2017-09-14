@@ -1,8 +1,8 @@
 import * as Swiper from 'swiper';
 
-import { NgZone, SimpleChanges, KeyValueDiffers } from '@angular/core';
-import { Directive, Optional, OnInit, DoCheck, OnDestroy, OnChanges } from '@angular/core';
-import { Input, HostBinding, Output, EventEmitter, ElementRef } from '@angular/core';
+import { NgZone, SimpleChanges, KeyValueDiffers,
+  Directive, Optional, OnInit, DoCheck, OnDestroy, OnChanges,
+  Input, HostBinding, Output, EventEmitter, ElementRef } from '@angular/core';
 
 import { SwiperConfig, SwiperConfigInterface, SwiperEvents } from './swiper.interfaces';
 
@@ -32,8 +32,6 @@ export class SwiperDirective implements OnInit, DoCheck, OnDestroy, OnChanges {
 
   @HostBinding('class.swiper')
   @Input() useSwiperClass: boolean = true;
-
-  @Input() runInsideAngular: boolean = false;
 
   @Input('swiper') config: SwiperConfigInterface;
 
@@ -135,20 +133,15 @@ export class SwiperDirective implements OnInit, DoCheck, OnDestroy, OnChanges {
       options.nextButton = element.querySelector(options.nextButton);
     }
 
-    if (this.runInsideAngular) {
+    this.zone.runOutsideAngular(() => {
       this.swiper = new Swiper(element, options);
-    } else {
-      this.zone.runOutsideAngular(() => {
-        this.swiper = new Swiper(element, options);
-      });
-    }
+    });
 
     this.S_INIT.emit(this.swiper);
 
     // Add native swiper event handling
     SwiperEvents.forEach((eventName) => {
       eventName = eventName.replace('swiper', '');
-
       eventName = eventName.charAt(0).toLowerCase() + eventName.slice(1);
 
       this.swiper.on(eventName, (...args) => {
@@ -157,7 +150,9 @@ export class SwiperDirective implements OnInit, DoCheck, OnDestroy, OnChanges {
         }
 
         if (this[`S_${eventName.toUpperCase()}`]) {
-          this[`S_${eventName.toUpperCase()}`].emit(args);
+          this.zone.run(() => {
+            this[`S_${eventName.toUpperCase()}`].emit(args);
+          });
         }
       });
     });
@@ -168,35 +163,33 @@ export class SwiperDirective implements OnInit, DoCheck, OnDestroy, OnChanges {
   }
 
   ngDoCheck() {
-    const changes = this.configDiff.diff(this.config || {});
+    if (this.configDiff) {
+      const changes = this.configDiff.diff(this.config || {});
 
-    if (changes) {
-      this.initialIndex = this.getIndex();
+      if (changes) {
+        this.initialIndex = this.getIndex();
 
-      changes.forEachAddedItem((changed) => {
-        if (changed.key === 'initialSlide') {
-          this.initialIndex = this.config.initialSlide;
-        }
-      });
+        changes.forEachAddedItem((changed) => {
+          if (changed.key === 'initialSlide') {
+            this.initialIndex = this.config.initialSlide;
+          }
+        });
 
-      this.ngOnDestroy();
+        this.ngOnDestroy();
 
-      // Timeout is needed for the styles to update properly
-      setTimeout(() => {
-        this.ngOnInit();
-      }, 0);
+        // Timeout is needed for the styles to update properly
+        setTimeout(() => {
+          this.ngOnInit();
+        }, 0);
+      }
     }
   }
 
   ngOnDestroy() {
     if (this.swiper) {
-      if (this.runInsideAngular) {
+      this.zone.runOutsideAngular(() => {
         this.swiper.destroy(true, true);
-      } else {
-        this.zone.runOutsideAngular(() => {
-          this.swiper.destroy(true, true);
-        });
-      }
+      });
 
       this.swiper = null;
     }
@@ -222,21 +215,13 @@ export class SwiperDirective implements OnInit, DoCheck, OnDestroy, OnChanges {
     if (this.swiper && changes['disabled']) {
       if (changes['disabled'].currentValue !== changes['disabled'].previousValue) {
         if (changes['disabled'].currentValue === true) {
-          if (this.runInsideAngular) {
+          this.zone.runOutsideAngular(() => {
             this.swiper.lockSwipes();
-          } else {
-            this.zone.runOutsideAngular(() => {
-              this.swiper.lockSwipes();
-            });
-          }
+          });
         } else if (changes['disabled'].currentValue === false) {
-          if (this.runInsideAngular) {
+          this.zone.runOutsideAngular(() => {
             this.swiper.unlockSwipes();
-          } else {
-            this.zone.runOutsideAngular(() => {
-              this.swiper.unlockSwipes();
-            });
-          }
+          });
         }
       }
     }
@@ -245,7 +230,7 @@ export class SwiperDirective implements OnInit, DoCheck, OnDestroy, OnChanges {
   update(updateTranslate?: boolean) {
     setTimeout(() => {
       if (this.swiper) {
-        if (this.runInsideAngular) {
+        this.zone.runOutsideAngular(() => {
           this.swiper.update();
 
           if (updateTranslate) {
@@ -255,19 +240,7 @@ export class SwiperDirective implements OnInit, DoCheck, OnDestroy, OnChanges {
               }
             }, 0);
           }
-        } else {
-          this.zone.runOutsideAngular(() => {
-            this.swiper.update();
-
-            if (updateTranslate) {
-              setTimeout(() => {
-                if (this.swiper) {
-                  this.swiper.update(true);
-                }
-              }, 0);
-            }
-          });
-        }
+        });
       }
     }, 0);
   }
@@ -304,37 +277,25 @@ export class SwiperDirective implements OnInit, DoCheck, OnDestroy, OnChanges {
         realIndex += this.swiper.loopedSlides;
       }
 
-      if (this.runInsideAngular) {
+      this.zone.runOutsideAngular(() => {
         this.swiper.slideTo(index, speed, !silent);
-      } else {
-        this.zone.runOutsideAngular(() => {
-          this.swiper.slideTo(index, speed, !silent);
-        });
-      }
+      });
     }
   }
 
   prevSlide(speed?: number, silent?: boolean) {
     if (this.swiper) {
-      if (this.runInsideAngular) {
+      this.zone.runOutsideAngular(() => {
         this.swiper.slidePrev(!silent, speed);
-      } else {
-        this.zone.runOutsideAngular(() => {
-          this.swiper.slidePrev(!silent, speed);
-        });
-      }
+      });
     }
   }
 
   nextSlide(speed?: number, silent?: boolean) {
     if (this.swiper) {
-      if (this.runInsideAngular) {
+      this.zone.runOutsideAngular(() => {
         this.swiper.slideNext(!silent, speed);
-      } else {
-        this.zone.runOutsideAngular(() => {
-          this.swiper.slideNext(!silent, speed);
-        });
-      }
+      });
     }
   }
 
@@ -344,13 +305,9 @@ export class SwiperDirective implements OnInit, DoCheck, OnDestroy, OnChanges {
     }
 
     if (this.swiper) {
-      if (this.runInsideAngular) {
+      this.zone.runOutsideAngular(() => {
         this.swiper.stopAutoplay();
-      } else {
-        this.zone.runOutsideAngular(() => {
-          this.swiper.stopAutoplay();
-        });
-      }
+      });
     }
   }
 
@@ -360,13 +317,9 @@ export class SwiperDirective implements OnInit, DoCheck, OnDestroy, OnChanges {
     }
 
     if (this.swiper) {
-      if (this.runInsideAngular) {
+      this.zone.runOutsideAngular(() => {
         this.swiper.startAutoplay();
-      } else {
-        this.zone.runOutsideAngular(() => {
-          this.swiper.startAutoplay();
-        });
-      }
+      });
     }
   }
 }
