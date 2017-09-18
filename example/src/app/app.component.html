@@ -32,7 +32,9 @@
       <div class="content-container" fxLayout="column" fxLayoutAlign="stretch" fxFlex>
           <swiper *ngIf="type == 'component' && show" overlay-controls [config]="config" (indexChange)="onIndexChange($event)" fxFlex>
             <div *ngFor="let slide of slides" class="swiper-slide">
-              <div class="swiper-slide-content" fxLayout="column" fxLayoutAlign="center center"><img src="http://lorempixel.com/350/400/cats/"></div>
+              <div class="swiper-zoom-container">
+                <img src="http://via.placeholder.com/350x400">
+              </div>
             </div>
           </swiper>
 
@@ -40,7 +42,7 @@
             <div class="swiper-wrapper">
               <div *ngFor="let slide of slides" class="swiper-slide">
                 <div class="swiper-zoom-container">
-                  <div class="swiper-slide-content" fxLayout="column" fxLayoutAlign="center center"><img src="http://lorempixel.com/350/400/cats/"></div>
+                  <img src="http://via.placeholder.com/350x400">
                 </div>
               </div>
             </div>

@@ -16,7 +16,7 @@ const SWIPER_CONFIG: SwiperConfigInterface = {
   centeredSlides: true,
   keyboardControl: true,
   zoom: true,
-  zoomMax: 3
+  zoomMax: 2
 };
 
 @NgModule({

@@ -34,7 +34,9 @@ export class AppComponent {
     pagination: '.swiper-pagination',
     paginationClickable: true,
     nextButton: '.swiper-button-next',
-    prevButton: '.swiper-button-prev'
+    prevButton: '.swiper-button-prev',
+    zoom: true,
+    zoomMax: 2
   };
 
   @ViewChild(SwiperComponent) componentRef: SwiperComponent;
@@ -43,15 +45,15 @@ export class AppComponent {
   constructor() {}
 
   toggleType() {
-    this.type = this.type == 'component' ? 'directive' : 'component';
+    this.type = this.type === 'component' ? 'directive' : 'component';
   }
 
   toggleDirection() {
-    this.config.direction = (this.config.direction == 'horizontal') ? 'vertical' : 'horizontal';
+    this.config.direction = (this.config.direction === 'horizontal') ? 'vertical' : 'horizontal';
   }
 
   toggleSlidesPerView() {
-    if (this.config.slidesPerView != 1) {
+    if (this.config.slidesPerView !== 1) {
       this.config.slidesPerView = 1;
     } else {
       this.config.slidesPerView = +this.config.slidesPerView + 1;
